@@ -18,7 +18,7 @@ const githubLimit = pLimit(10);
 const npmLimit = pLimit(10);
 
 async function* getListOfRepos(org) {
-  const page = 1;
+  let page = 1;
   const limit = 100;
   let response;
   do {
