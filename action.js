@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const { default: axios } = require('axios');
-const { default: pLimit } = require('p-limit');
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
+import axios from 'axios';
+import pLimit from 'p-limit';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 const argv = yargs(hideBin(process.argv)).argv;
 
 /**
