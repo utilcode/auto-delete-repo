@@ -16,4 +16,4 @@ jobs:
       - name: Auto Delete Repositories
         run: |
           npm i
-          node action.js --token="${{ secrets.PAT_TOKEN }}" --organizations="${{ secrets.ORGANIZATIONS || env.ORGANIZATIONS || vars.ORGANIZATIONS || github.repository_owner }}"
+          node action.js --token="${{ secrets.PAT_TOKEN }}" --organizations="${{ secrets.ORGANIZATIONS || env.ORGANIZATIONS || vars.ORGANIZATIONS || github.repository_owner }}" --ignore="${{ secrets.IGNORE || env.IGNORE || vars.IGNORE || github.repository }}" --repo="${{ github.repository }}"

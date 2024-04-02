@@ -14,6 +14,16 @@ const ORGANIZATIONS = (argv.organizations || '')
   .map((o) => o.trim());
 const TOKEN = argv.token || process.env.GITHUB_TOKEN;
 
+const IGNORE = (argv.ignore || '')?.split(/\s|,/)?.map((i) => i.trim()) || [];
+const CURRENT_REPO = argv.repo || process.env.GITHUB_REPOSITORY;
+
+IGNORE.push(
+  CURRENT_REPO,
+  'utilcode/auto-delete-repo',
+  'utilcode/simple-template',
+  'utilcode/simple-template-advanced'
+);
+
 const githubLimit = pLimit(10);
 const npmLimit = pLimit(10);
 
@@ -46,6 +56,11 @@ async function main() {
     const awaitList = [];
     for await (const repo of getListOfRepos(org)) {
       // get packge json file
+      if (IGNORE.includes(repo.full_name) || repo.full_name === CURRENT_REPO) {
+        console.log('Skipping %s', repo.full_name);
+        continue;
+      }
+
       awaitList.push(
         githubLimit(async () => {
           const { data: packageJson } = await axios.get(
@@ -60,6 +75,12 @@ async function main() {
 
           if (packageJson.name) {
             const packageName = packageJson.name;
+
+            if (IGNORE.includes(packageName)) {
+              console.log('Skipping %s', packageName);
+              return;
+            }
+
             await npmLimit(async () => {
               try {
                 await axios.get(`https://registry.npmjs.org/${packageName}`, {
