@@ -59,6 +59,7 @@ async function main() {
           );
 
           if (packageJson.name) {
+            const packageName = packageJson.name;
             await npmLimit(async () => {
               try {
                 await axios.get(`https://registry.npmjs.org/${packageName}`, {
