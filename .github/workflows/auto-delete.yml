@@ -1,0 +1,19 @@
+name: Auto Delete Repositories
+
+on: workflow_dispatch
+jobs:
+  commit-change:
+    name: Auto Delete Repositories
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        name: Setup NodeJS
+        with:
+          node-version: '20.x'
+      - name: Auto Delete Repositories
+        run: |
+          npm i
+          node action.js --token="${{ secrets.PAT_TOKEN }}" --organizations="${{ secrets.ORGANIZATIONS || env.ORGANIZATIONS || vars.ORGANIZATIONS || github.repository_owner }}"
