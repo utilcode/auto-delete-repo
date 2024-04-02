@@ -14,8 +14,8 @@ const ORGANIZATIONS = (argv.organizations || '')
   .map((o) => o.trim());
 const TOKEN = argv.token || process.env.GITHUB_TOKEN;
 
-const IGNORE = (argv.ignore || '')?.split(/\s|,/)?.map((i) => i.trim()) || [];
-const CURRENT_REPO = argv.repo || process.env.GITHUB_REPOSITORY;
+const IGNORE = (argv.ignore || '')?.split(/\s|,/)?.map((i) => i.trim().toLowerCase()) || [];
+const CURRENT_REPO = (argv.repo || process.env.GITHUB_REPOSITORY)?.toLowerCase();
 
 IGNORE.push(
   CURRENT_REPO,
@@ -55,8 +55,9 @@ async function main() {
   for (let org of ORGANIZATIONS) {
     const awaitList = [];
     for await (const repo of getListOfRepos(org)) {
+      const repoNameLower = repo.full_name.toLowerCase();
       // get packge json file
-      if (IGNORE.includes(repo.full_name) || repo.full_name === CURRENT_REPO) {
+      if (IGNORE.includes(repoNameLower) || repoNameLower === CURRENT_REPO) {
         console.log('Skipping %s', repo.full_name);
         continue;
       }
@@ -76,7 +77,7 @@ async function main() {
           if (packageJson.name) {
             const packageName = packageJson.name;
 
-            if (IGNORE.includes(packageName)) {
+            if (IGNORE.includes(packageName.toLowerCase())) {
               console.log('Skipping %s', packageName);
               return;
             }
